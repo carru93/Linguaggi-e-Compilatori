@@ -31,7 +31,7 @@ $(MULTIINSTRUCTIONS): $(OBJFILEs)
 	$(CXX) ${LLVMFLAGS} -dylib -shared $^ -o $@
 
 $(TESTDIR)/%.ll: $(TESTDIR)/%.cpp
-	$(CXX) -S -c -O0 -emit-llvm -o $@ $< $(CXXFLAGS)
+	$(CXX) -S -c -O0 -Xclang -disable-O0-optnone -emit-llvm -o $@ $< $(CXXFLAGS)
 
 clean:
 	$(RM) $(STRENGTH) $(IDENTITY) $(MULTIINSTRUCTIONS) $(OBJFILEs) $(TESTBCFILEs) $(TESTIRFILEs) $(TESTOUTDIR)/*
@@ -39,19 +39,22 @@ clean:
 st:
 	make $(file)
 	make $(STRENGTH)
+	opt -passes=mem2reg $(file) -o $(subst .ll,.bc,$(file))
 	opt -load-pass-plugin=${LIBDIR}/Strength.so -passes=strength $(file) -o $(subst .ll,.bc,$(file))
 	llvm-dis $(subst .ll,.bc,$(file)) -o $(TESTOUTDIR)/$(notdir $(subst .ll,_optimized.ll,$(file)))
 
 ai:
 	make $(file)
 	make $(IDENTITY)
+	opt -passes=mem2reg $(file) -o $(subst .ll,.bc,$(file))
 	opt -load-pass-plugin=${LIBDIR}/AlgebraicIdentity.so -passes=ai $(file) -o $(subst .ll,.bc,$(file))
 	llvm-dis $(subst .ll,.bc,$(file)) -o $(TESTOUTDIR)/$(notdir $(subst .ll,_optimized.ll,$(file)))
 
 mi:
 	make $(file)
 	make $(MULTIINSTRUCTIONS)
-	opt -load-pass-plugin=${LIBDIR}/MultiInstructions.so -passes=multi $(file) -o $(subst .ll,.bc,$(file))
+	opt -passes=mem2reg $(file) -o $(subst .ll,.bc,$(file))
+	opt -load-pass-plugin=${LIBDIR}/MultiInstructions.so -passes=multiinst $(subst .ll,.bc,$(file)) -o $(subst .ll,.bc,$(file))
 	llvm-dis $(subst .ll,.bc,$(file)) -o $(TESTOUTDIR)/$(notdir $(subst .ll,_optimized.ll,$(file)))
 
 test: $(TESTIRFILEs)

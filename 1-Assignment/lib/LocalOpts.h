@@ -15,6 +15,11 @@ namespace llvm
     {
         PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM);
     };
+
+    struct MultiInstOpt : public PassInfoMixin<MultiInstOpt>
+    {
+        PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM);
+    };
 }
 
 #endif

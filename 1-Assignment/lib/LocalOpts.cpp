@@ -20,8 +20,14 @@ extern "C" PassPluginLibraryInfo llvmGetPassPluginInfo()
                         MPM.addPass(AlgebraicIdentity());
                         return true;
                     }
-                    if (Name == "strength") {
+                    if (Name == "strength")
+                    {
                         MPM.addPass(StrengthReduction());
+                        return true;
+                    }
+                    if (Name == "multiinst")
+                    {
+                        MPM.addPass(MultiInstOpt());
                         return true;
                     }
                     return false;

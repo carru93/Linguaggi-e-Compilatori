@@ -3,6 +3,9 @@
 
 #include <llvm/IR/PassManager.h>
 #include <llvm/IR/Constants.h>
+#include <llvm/Analysis/LoopAnalysisManager.h>
+#include <llvm/Analysis/LoopPass.h>
+#include <llvm/Transforms/Scalar/LoopPassManager.h>
 
 namespace llvm
 {

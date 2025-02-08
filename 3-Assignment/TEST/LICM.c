@@ -6,12 +6,12 @@ void foo(int c, int z)
 
 LOOP:
     z = z + 1;
-    y = c + 3;
-    q = c + 7;
+    y = c + 3; // y is loop invariant and can be hoisted
+    q = c + 7; // q is loop invariant and can be hoisted
     if (z < 5)
     {
         a = a + 2;
-        h = c + 3;
+        h = c + 3; // h is loop invariant ma non è l'unica definizione
     }
     else
     {
@@ -22,10 +22,10 @@ LOOP:
             goto EXIT;
         }
     }
-    m = y + 7;
+    m = y + 7; // m is loop invariant but does not dominate all exits
     n = h + 2;
-    y = c + 7;
-    r = q + 5;
+    y = c + 7; // y is loop invariant but does not dominate all exits
+    r = q + 5; // r is loop invariant but does not dominate all exits
     goto LOOP;
 EXIT:
     printf("%d,%d,%d,%d,%d,%d,%d,%d\n", a, h, m, n, q, r, y, z);
